@@ -85,8 +85,8 @@ class Camera:
 
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj):
-        obj.rect.x += self.dx
-        obj.rect.y += self.dy
+        obj.rect.x = (obj.rect.x + self.dx) % size[0] - tile_width
+        obj.rect.y = (obj.rect.y + self.dy) % size[1]
 
     # позиционировать камеру на объекте target
     def update(self, target):
