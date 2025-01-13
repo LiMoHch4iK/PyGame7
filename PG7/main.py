@@ -77,6 +77,23 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= dy * tile_height
 
 
+class Camera:
+    # зададим начальный сдвиг камеры
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    # сдвинуть объект obj на смещение камеры
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    # позиционировать камеру на объекте target
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - size[0] // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - size[1] // 2)
+
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('Марио')
@@ -103,6 +120,13 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
 
     clock = pygame.time.Clock()
+
+    camera = Camera()
+    # изменяем ракурс камеры
+    camera.update(player)
+    # обновляем положение всех спрайтов
+    for sprite in all_sprites:
+        camera.apply(sprite)
     screen.fill('black')
     running = True
     while running:
@@ -118,6 +142,11 @@ if __name__ == '__main__':
                     player.update(1, 0)
                 if event.key == pygame.K_LEFT:
                     player.update(-1, 0)
+                screen.fill('black')
+                camera.update(player)
+                for sprite in all_sprites:
+                    camera.apply(sprite)
+
         all_sprites.draw(screen)
         player_group.draw(screen)
         pygame.display.flip()
